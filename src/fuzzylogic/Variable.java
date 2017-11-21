@@ -26,4 +26,5 @@ class Variable {
     public String toString() {
         return "Variable{" + "variableName=" + variableName + ", variableValue=" + variableValue + ", numberOfSetsForEachVar=" + numberOfSetsForEachVar + ", fuzzySet=" + fuzzySet + '}';
     }
+    
 }
