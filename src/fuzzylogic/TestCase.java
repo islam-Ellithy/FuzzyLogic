@@ -5,7 +5,11 @@
  */
 package fuzzylogic;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 class TestCase {
 
@@ -21,61 +25,67 @@ class TestCase {
 
     void takeInput() {
 
-        Scanner scanner = new Scanner(System.in);
-        numberOfVariables = scanner.nextInt();
-        variables = new Variable[numberOfVariables];
+        Scanner scanner;
+        try {
+            scanner = new Scanner(new File("input.txt"));
 
-        String varName;
-        int numOfSets;
-        int varValue;
-        String setName;
-        String setType;
+            numberOfVariables = scanner.nextInt();
+            variables = new Variable[numberOfVariables];
 
-        for (int i = 0; i < numberOfVariables; i++) {
+            String varName;
+            int numOfSets;
+            int varValue;
+            String setName;
+            String setType;
 
-            varName = scanner.next();
-            varValue = scanner.nextInt();
-            numOfSets = scanner.nextInt();
+            for (int i = 0; i < numberOfVariables; i++) {
 
-            variables[i] = new Variable(varName, varValue, numOfSets);
+                varName = scanner.next();
+                varValue = scanner.nextInt();
+                numOfSets = scanner.nextInt();
 
-            for (int j = 0; j < numOfSets; j++) {
-                setName = scanner.next();
-                setType = scanner.next();
+                variables[i] = new Variable(varName, varValue, numOfSets);
 
-                variables[i].fuzzySet[j] = new FuzzySet(setName, setType);
-                int element;
-                for (int k = 0; k < variables[i].fuzzySet[j].numOfValues.length; k++) {
-                    element = scanner.nextInt();
-                    variables[i].fuzzySet[j].numOfValues[k] = element;
+                for (int j = 0; j < numOfSets; j++) {
+                    setName = scanner.next();
+                    setType = scanner.next();
+
+                    variables[i].fuzzySet[j] = new FuzzySet(setName, setType);
+                    int element;
+                    for (int k = 0; k < variables[i].fuzzySet[j].numOfValues.length; k++) {
+                        element = scanner.nextInt();
+                        variables[i].fuzzySet[j].numOfValues[k] = element;
+                    }
                 }
             }
-        }
 
-        varName = scanner.next();
-        numOfSets = scanner.nextInt();
-        outputSet = new Variable(varName, 0, numOfSets);
+            varName = scanner.next();
+            numOfSets = scanner.nextInt();
+            outputSet = new Variable(varName, 0, numOfSets);
 
-        for (int i = 0; i < numOfSets; i++) {
-            setName = scanner.next();
-            setType = scanner.next();
-            outputSet.fuzzySet[i] = new FuzzySet(setName, setType);
-            for (int j = 0; j < outputSet.fuzzySet[i].numOfValues.length; j++) {
-                varValue = scanner.nextInt();
-                outputSet.fuzzySet[i].numOfValues[j] = varValue;
+            for (int i = 0; i < numOfSets; i++) {
+                setName = scanner.next();
+                setType = scanner.next();
+                outputSet.fuzzySet[i] = new FuzzySet(setName, setType);
+                for (int j = 0; j < outputSet.fuzzySet[i].numOfValues.length; j++) {
+                    varValue = scanner.nextInt();
+                    outputSet.fuzzySet[i].numOfValues[j] = varValue;
+                }
             }
-        }
 
-        numberOfRules = scanner.nextInt();
+            numberOfRules = scanner.nextInt();
 
-        int numOfPremises;
-        String statement;
+            int numOfPremises;
+            String statement;
 
-        rules = new Rule[numberOfRules];
-        for (int i = 0; i < numberOfRules; i++) {
-            numOfPremises = scanner.nextInt();
-            statement = scanner.nextLine();
-            rules[i] = new Rule(numOfPremises, statement);
+            rules = new Rule[numberOfRules];
+            for (int i = 0; i < numberOfRules; i++) {
+                numOfPremises = scanner.nextInt();
+                statement = scanner.nextLine();
+                rules[i] = new Rule(numOfPremises, statement);
+            }
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(TestCase.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

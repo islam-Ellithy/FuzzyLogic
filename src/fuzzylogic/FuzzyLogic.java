@@ -53,7 +53,6 @@ NegMed triangle
 -25 -15 -5 
 NegSm triangle
 -12 -6 0 
-
 4
 2 position = Left AND angel = RBelow then firePosition = PosSm 
 2 ANGEL = RBelow OR position = LeftCenter then firePosition = PosMed 
