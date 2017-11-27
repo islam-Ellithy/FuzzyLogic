@@ -23,10 +23,6 @@ public class FuzzyLogic {
         test.takeInput();
 
         System.out.println(test);
-        
-        for(int i = 0 ; i < test.numberOfRules;i++){
-            System.out.println(test.rules[i]);
-        }
             
     }
 

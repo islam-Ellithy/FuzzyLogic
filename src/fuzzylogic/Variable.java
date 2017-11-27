@@ -5,14 +5,16 @@
  */
 package fuzzylogic;
 
+import java.util.Arrays;
+
 class Variable {
 
     public String variableName;
-    public int variableValue;
+    public float variableValue;
     public int numberOfSetsForEachVar;
-    public FuzzySet[] fuzzySet;
+    public FuzzySet[] fuzzySet;//map between membership and fuzzyset
 
-    public Variable(String varName, int varValue, int newNum) {
+    public Variable(String varName, float varValue, int newNum) {
 
         variableName = varName;
         variableValue = varValue;
@@ -22,9 +24,27 @@ class Variable {
         fuzzySet = new FuzzySet[numberOfSetsForEachVar];
     }
 
+    public void fuzzify() {
+        for (FuzzySet Set : fuzzySet) {
+            Set.calculateMembership(variableValue);
+        }
+    }
+
+    public void defuzzify() {
+        variableValue = 0;
+        float divisor = 0;
+        for (FuzzySet Set : fuzzySet) {
+            Set.calculateCentroid();
+            variableValue += Set.centroid * Set.membership;
+            divisor += Set.membership;
+        }
+        if(divisor !=0)
+            variableValue /= divisor;
+    }
+
     @Override
     public String toString() {
-        return "Variable{" + "variableName=" + variableName + ", variableValue=" + variableValue + ", numberOfSetsForEachVar=" + numberOfSetsForEachVar + ", fuzzySet=" + fuzzySet + '}';
+        return "Variable{" + "variableName=" + variableName + ", variableValue=" + variableValue + ", numberOfSetsForEachVar=" + numberOfSetsForEachVar + ", fuzzySet=" + Arrays.toString(fuzzySet) + '}';
     }
-    
+
 }

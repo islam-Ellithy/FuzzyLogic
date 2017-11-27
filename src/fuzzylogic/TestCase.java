@@ -10,6 +10,8 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 class TestCase {
 
@@ -21,6 +23,31 @@ class TestCase {
 
     public TestCase() {
 
+    }
+
+    public Variable getVariable(String name) {
+        if (outputSet.variableName.equalsIgnoreCase(name)) {
+            return outputSet;
+        }
+        for (Variable variable : variables) {
+            if (variable.variableName.equalsIgnoreCase(name)) {
+                return variable;
+            }
+        }
+
+        System.out.println("Variable not found ");
+        return null;
+    }
+
+    public FuzzySet getfuzzyset(Variable v, String name) {
+        for (FuzzySet fuzzySet : v.fuzzySet) {
+            if (fuzzySet.fuzzySetName.equalsIgnoreCase(name)) {
+                return fuzzySet;
+            }
+        }
+        System.out.println("fuzzyset not found ");
+
+        return null;
     }
 
     void takeInput() {
@@ -73,6 +100,10 @@ class TestCase {
                 }
             }
 
+            for (Variable variable : variables) {
+                variable.fuzzify();
+            }
+
             numberOfRules = scanner.nextInt();
 
             int numOfPremises;
@@ -82,16 +113,65 @@ class TestCase {
             for (int i = 0; i < numberOfRules; i++) {
                 numOfPremises = scanner.nextInt();
                 statement = scanner.nextLine();
-                rules[i] = new Rule(numOfPremises, statement);
+                rules[i] = interprter(numOfPremises, statement);
             }
+            for (Rule rule : rules) {
+                rule.executee();
+            }
+
+            outputSet.defuzzify();
         } catch (FileNotFoundException ex) {
             Logger.getLogger(TestCase.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
+    public Rule interprter(int numberOfPremises, String statement) {
+        ArrayList<FuzzySet> fuzzy = new ArrayList<>(numberOfPremises);
+        ArrayList<String> opertor = new ArrayList<>(numberOfPremises - 1);
+        Variable vtemp;
+        FuzzySet ftemp;
+        while (statement.startsWith(" ")) {
+            statement = statement.substring(1);
+        }
+        String[] elements = statement.split(" ");
+        //System.out.println(elements[0]);
+        //System.out.println();
+        vtemp = getVariable(elements[0]);
+        //System.out.println(vtemp);
+        //System.out.println(elements[2]);
+        ftemp = getfuzzyset(vtemp, elements[2]);
+        //System.out.println(ftemp+" here ");
+        fuzzy.add(ftemp);
+        for (int i = 0; i < elements.length; i++) {
+
+            if (elements[i].equals("AND") || elements[i].equals("OR")) {
+
+                vtemp = getVariable(elements[i + 1]);
+                ftemp = getfuzzyset(vtemp, elements[i + 3]);
+                fuzzy.add(ftemp);
+            }
+            if (elements[i].equalsIgnoreCase("then")) {
+                vtemp = getVariable(elements[i + 1]);
+                ftemp = getfuzzyset(vtemp, elements[i + 3]);
+            }
+        }
+
+        for (String element : elements) {
+            if (element.equals("AND")) {
+                opertor.add("AND");
+            } else if (element.equals("OR")) {
+                opertor.add("OR");
+            }
+        }
+        String outputname = elements[elements.length - 1];
+        FuzzySet ou = ftemp;
+        Rule ru = new Rule(fuzzy, opertor, ou, statement);
+        return ru;
+    }
+
     @Override
     public String toString() {
-        return "TestCase{" + "numberOfVariables=" + numberOfVariables + ", variables=" + variables + ", outputSet=" + outputSet + ", numberOfRules=" + numberOfRules + ", rules=" + rules + '}';
+        return "TestCase{" + "numberOfVariables=" + numberOfVariables + ", \nvariables=" + Arrays.toString(variables) + ", \noutputSet=" + outputSet + ", \nnumberOfRules=" + numberOfRules + ", \nrules=" + Arrays.toString(rules) + '}';
     }
 
 }
